@@ -1,2 +1,2 @@
 console.log("imported moduel")
-export default 23
+export default 50000;
