@@ -2,7 +2,7 @@ const path = require('path');
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    entry: './src/js/index.js',
+    entry: ['@babel/polyfill', './src/js/index.js'],
     output:{
         //Absolute Path
         path: path.resolve(__dirname,'dist'),
@@ -16,6 +16,17 @@ module.exports = {
             filename: 'index.html',
             template: './src/index.html'
         })
-    ]
+    ],
+    module:{
+        rules:[
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader'
+                }
+            }
+        ]
+    }
 
 }
