@@ -31,3 +31,13 @@ elements.searchBtn.addEventListener('submit', e => {
     e.preventDefault();
     controlSearch();
 })
+
+elements.resultsPages.addEventListener('click', e =>{
+    const clickedButton = e.target.closest('.btn-inline');
+    if(clickedButton){
+        const pageNumber = parseInt(clickedButton.dataset.goto, 10);
+        searchView.clearResults();
+        searchView.renderRecipes(state.search.result, pageNumber);
+    }
+ 
+})
