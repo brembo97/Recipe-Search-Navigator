@@ -66,7 +66,6 @@ const renderPaginationButtons = (page, numberOfResults, resultsPerPage) => {
     }else if(page === pages && pages > 1){
         buttons = createButtons(page, 'prev');
     }
-    console.log(buttons);
     elements.resultsPages.insertAdjacentHTML('afterbegin',buttons);
 }
 
