@@ -22,7 +22,8 @@ export default class Recipe {
 
     calcPrepTime(){
         //For every 3 ingredients 10 minutes to prep
-        this.time = Math.ceil(this.ingredients.length / 3) * 10;
+        const numIng = this.ingredients.length;
+        this.time = Math.ceil( numIng/ 3) * 10;
     }
 
     calcServings(){

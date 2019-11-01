@@ -26,7 +26,12 @@ const controlSearch = async () => {
     searchView.clearResults();
     renderLoader(elements.resultsDiv);
     //4. Get the recipes results from the query
-    await state.search.getRecipes();
+    try{
+        await state.search.getRecipes();
+    }catch(err){
+        console.log(err);
+        clearLoader();
+    }
     // 5. Display the recipes on the UI
     clearLoader();
     searchView.renderRecipes(state.search.result);
@@ -50,7 +55,28 @@ elements.resultsPages.addEventListener('click', e =>{
 /**
  * CONTROL RECIPE
  */
-const recipe = new Recipe(35120);
-recipe.getRecipeInfo();
-console.log(recipe);
+ const controlRecipe = async () => {
+    //Get URL id
+    const id = window.location.hash.replace('#', '');
 
+    if(id){
+        // Store new Recipe in state
+        state.recipe = new Recipe(id);
+        //Prepare the UI
+    
+        try{
+            // Fetch the Recipe info
+            await state.recipe.getRecipeInfo();
+            // Calculate servings and time
+            state.recipe.calcPrepTime();
+            state.recipe.calcServings();
+            //Render the results in UI
+            console.log(state.recipe);
+        }catch(err){
+            alert(err);
+        }
+    }
+ }
+
+ //Attaching two event triggers to the same element 
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
