@@ -14,18 +14,13 @@ export const clearResults = () => {
     elements.resultsPages.innerHTML = '';
 }
 
-const limitRecipeTitle = (title, limit = 17) => {
-    if(title.length > limit){
-        const newTitle = [];
-        title.split(' ').reduce((acc, curr)=>{
-            if(acc + curr.length <= limit){
-                newTitle.push(curr);
-            }
-            return acc + curr.length;
-        },0)
-        return `${newTitle.join(' ')}...`;
-    }
-    return title;
+export const renderRecipes = (recipes, page = 1, resultsPerPage = 10) => {
+    //render the results
+    const start = (page - 1) * resultsPerPage;
+    const end = page * resultsPerPage;
+    recipes.slice(start, end).forEach(renderRecipe);
+    //render pagination buttons
+    renderPaginationButtons(page, recipes.length, resultsPerPage);
 }
 
 const renderRecipe = recipe => {
@@ -44,14 +39,19 @@ const renderRecipe = recipe => {
     elements.resultsList.insertAdjacentHTML('beforeend',markup);
 }
 
-const createButtons = (page, type) => `
-    <button class="btn-inline results__btn--${type === 'prev' ? 'prev' : 'next'}" data-goto=${type === 'prev' ? page - 1 : page + 1} >
-    <span>Page ${type === 'prev' ? page - 1 : page + 1}</span>
-    <svg class="search__icon">
-        <use href="img/icons.svg#icon-triangle-${type === 'prev' ? 'left' : 'right'}"></use>
-    </svg>
-    </button>
-`
+const limitRecipeTitle = (title, limit = 17) => {
+    if(title.length > limit){
+        const newTitle = [];
+        title.split(' ').reduce((acc, curr)=>{
+            if(acc + curr.length <= limit){
+                newTitle.push(curr);
+            }
+            return acc + curr.length;
+        },0)
+        return `${newTitle.join(' ')}...`;
+    }
+    return title;
+}
 
 const renderPaginationButtons = (page, numberOfResults, resultsPerPage) => {
     const pages = Math.ceil(numberOfResults/resultsPerPage);
@@ -69,11 +69,12 @@ const renderPaginationButtons = (page, numberOfResults, resultsPerPage) => {
     elements.resultsPages.insertAdjacentHTML('afterbegin',buttons);
 }
 
-export const renderRecipes = (recipes, page = 1, resultsPerPage = 10) => {
-    //render the results
-    const start = (page - 1) * resultsPerPage;
-    const end = page * resultsPerPage;
-    recipes.slice(start, end).forEach(renderRecipe);
-    //render pagination buttons
-    renderPaginationButtons(page, recipes.length, resultsPerPage);
-}
+const createButtons = (page, type) => `
+    <button class="btn-inline results__btn--${type === 'prev' ? 'prev' : 'next'}" data-goto=${type === 'prev' ? page - 1 : page + 1} >
+    <span>Page ${type === 'prev' ? page - 1 : page + 1}</span>
+    <svg class="search__icon">
+        <use href="img/icons.svg#icon-triangle-${type === 'prev' ? 'left' : 'right'}"></use>
+    </svg>
+    </button>
+`
+

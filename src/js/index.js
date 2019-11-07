@@ -49,7 +49,6 @@ elements.resultsPages.addEventListener('click', e =>{
         searchView.clearResults();
         searchView.renderRecipes(state.search.result, pageNumber);
     }
- 
 })
 
 /**
@@ -60,16 +59,21 @@ elements.resultsPages.addEventListener('click', e =>{
     const id = window.location.hash.replace('#', '');
 
     if(id){
+        //Prepare the UI for changes
+
         // Store new Recipe in state
         state.recipe = new Recipe(id);
-        //Prepare the UI
-    
+
+        //Fetch and display results
         try{
-            // Fetch the Recipe info
+            // Fetch the Recipe and render it
             await state.recipe.getRecipeInfo();
+            state.recipe.parseIngredients();
+
             // Calculate servings and time
             state.recipe.calcPrepTime();
             state.recipe.calcServings();
+
             //Render the results in UI
             console.log(state.recipe);
         }catch(err){
