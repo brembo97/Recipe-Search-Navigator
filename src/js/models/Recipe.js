@@ -1,6 +1,5 @@
 import axios from 'axios';
 import {apiURL} from '../config'
-import { parse } from 'url';
 
 export default class Recipe {
     constructor(id){
@@ -34,7 +33,7 @@ export default class Recipe {
     parseIngredients(){
         
         const shortFormats = ["tbsp", "tbsp", "cps", "cps", "ozs", "ozs"];
-        const longFormats = ["teaspoons", "teaspoon", "cups", "cup", "ounces", "ounce"];
+        const longFormats = ["teaspoons", "teaspoon", "cups", "cup", "ounces", "ounce", "kg", "g"];
 
         const newIngredients = this.ingredients.map(el => {
             //1) Standarize the format
@@ -70,6 +69,7 @@ export default class Recipe {
                 parsedIng.amount = parseInt(arrIng[0],10);
                 parsedIng.name = arrIng.slice(1).join(' ');
 
+                //Edge case '3-4'
                 if(arrIng[0].includes('-')){
                     parsedIng.amount = eval(arrIng[0].replace('-','/'));
                 }
@@ -82,5 +82,7 @@ export default class Recipe {
         })
         this.ingredients = newIngredients;
     }
+
+    
 
 }

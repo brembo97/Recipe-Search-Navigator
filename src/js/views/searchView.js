@@ -14,6 +14,14 @@ export const clearResults = () => {
     elements.resultsPages.innerHTML = '';
 }
 
+export const highlightSelectedRecipe = id => {
+    //remove active class from all recipes
+    const recipes = Array.from(document.querySelectorAll('a.results__link'));
+    recipes.forEach( el => el.classList.remove("results__link--active"));
+    //add active class on clicked recipe
+    document.querySelector(`a.results__link[href="#${id}"]`).classList.add("results__link--active");
+}
+
 export const renderRecipes = (recipes, page = 1, resultsPerPage = 10) => {
     //render the results
     const start = (page - 1) * resultsPerPage;
@@ -26,7 +34,7 @@ export const renderRecipes = (recipes, page = 1, resultsPerPage = 10) => {
 const renderRecipe = recipe => {
     const markup = `
     <li>
-        <a class="results__link results__link--active" href="#${recipe.recipe_id}">
+        <a class="results__link" href="#${recipe.recipe_id}">
             <figure class="results__fig">
                 <img src="${recipe.image_url}" alt="${limitRecipeTitle(recipe.title)}">
             </figure>

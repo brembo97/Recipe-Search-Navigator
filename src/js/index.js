@@ -1,6 +1,7 @@
 import Search from './models/Search'
 import Recipe from './models/Recipe'
 import * as searchView from './views/searchView' 
+import * as recipeView from './views/recipeView'
 import {elements, renderLoader, clearLoader} from './views/base'
 
 
@@ -60,11 +61,13 @@ elements.resultsPages.addEventListener('click', e =>{
 
     if(id){
         //Prepare the UI for changes
+        recipeView.clearRecipe();
+        renderLoader(elements.recipe);
+        if(state.search) searchView.highlightSelectedRecipe(id);
 
         // Store new Recipe in state
         state.recipe = new Recipe(id);
 
-        //Fetch and display results
         try{
             // Fetch the Recipe and render it
             await state.recipe.getRecipeInfo();
@@ -75,7 +78,8 @@ elements.resultsPages.addEventListener('click', e =>{
             state.recipe.calcServings();
 
             //Render the results in UI
-            console.log(state.recipe);
+            clearLoader();
+            recipeView.renderRecipeInfo(state.recipe);
         }catch(err){
             alert(err);
         }
@@ -84,3 +88,6 @@ elements.resultsPages.addEventListener('click', e =>{
 
  //Attaching two event triggers to the same element 
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
+
+//Add event handlers to increase servings
+elements.recipe.addEventListener('click')
