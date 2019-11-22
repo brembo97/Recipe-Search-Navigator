@@ -1,12 +1,15 @@
 import Search from './models/Search'
 import Recipe from './models/Recipe'
+import List from './models/List'
+import Like from './models/Like'
 import * as searchView from './views/searchView' 
 import * as recipeView from './views/recipeView'
+import * as listView from './views/listView'
 import {elements, renderLoader, clearLoader} from './views/base'
 
 
 /**GLOBAL STATE of the app
- * - Seach Object
+ * - Search Object
  * - Current recipe Object 
  * - Ingredient Shopping List Object
  * - Favorite Recipes
@@ -89,5 +92,68 @@ elements.resultsPages.addEventListener('click', e =>{
  //Attaching two event triggers to the same element 
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
 
-//Add event handlers to increase servings
-elements.recipe.addEventListener('click')
+/**
+ * CONTROL LIST
+ */
+const controlList = () =>{
+    //Add empty list to state
+    state.shoppingList = new List();
+    window.l = state.shoppingList;
+    //Fill the list
+    state.recipe.ingredients.forEach(item => {
+        const newItem = state.shoppingList.addItem(item.amount, item.unit, item.name);
+        listView.renderList(newItem);
+    });
+    //Prepare UI and render results
+    listView.clearList();
+    state.shoppingList.list.forEach(item => {
+        listView.renderList(item);
+    })
+}
+
+//Deleting items and updating amounts
+elements.shoppingList.addEventListener('click', e => {
+    const clickedItem = e.target;
+    const parentElement = clickedItem.closest('.shopping__item');
+    //Delete item
+    if(clickedItem.matches('.shopping__delete, .shopping__delete *')){
+        //Delete from state
+        state.shoppingList.deleteItem(parentElement.dataset.itemid);
+        //Delete from UI
+        listView.clearListItem(parentElement.dataset.itemid);
+    //Update item amount
+    } else if(clickedItem.matches('.shopping__count input')){
+        state.shoppingList.updateItem(parentElement.dataset.itemid, parseFloat(clickedItem.value,10));
+    }
+});
+
+/**
+ * CONTROL LIKE
+ */
+
+const controlLike = () => {
+    if(!state.likes) state.likes = new Like();
+
+}
+
+
+//Event handling for the recipe panel
+elements.recipe.addEventListener('click', e => {
+    //Change servings event listener
+    if(e.target.matches('.btn-decrease, .btn-decrease *')){
+        if(state.recipe.servings > 1)
+            state.recipe.updateServings('decr');
+            recipeView.updateServingsDisplay(state.recipe);
+    }else if(e.target.matches('.btn-increase, .btn-increase *')){
+        state.recipe.updateServings('incr');
+        recipeView.updateServingsDisplay(state.recipe);
+    }
+    //Call control list logic
+    else if(e.target.matches('.recipe__btn-add, .recipe__btn-add *')){
+        controlList();
+    }
+    //Call control like logic
+    else if(e.target.matches('.recipe__love, .recipe__love *')){
+        controlLike();
+    }
+});

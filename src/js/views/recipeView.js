@@ -25,12 +25,12 @@ export const renderRecipeInfo = recipe => {
             <span class="recipe__info-text"> servings</span>
 
             <div class="recipe__info-buttons">
-                <button class="btn-tiny">
+                <button class="btn-tiny btn-decrease">
                     <svg>
                         <use href="img/icons.svg#icon-circle-with-minus"></use>
                     </svg>
                 </button>
-                <button class="btn-tiny">
+                <button class="btn-tiny btn-increase">
                     <svg>
                         <use href="img/icons.svg#icon-circle-with-plus"></use>
                     </svg>
@@ -52,7 +52,7 @@ export const renderRecipeInfo = recipe => {
             ${recipe.ingredients.map(createRecipe).join('')}
         </ul>
 
-        <button class="btn-small recipe__btn">
+        <button class="btn-small recipe__btn recipe__btn-add">
             <svg class="search__icon">
                 <use href="img/icons.svg#icon-shopping-cart"></use>
             </svg>
@@ -99,7 +99,9 @@ const convertToFraction = number => {
     
     if(!dec)
         return number
-
+    //edge case 1.999999
+    if(dec > 9999 && dec.toString().includes('9'))
+        return Math.ceil(number) ;
     if(int === 0){
         const x = new Fraction(number)
         return `${x.n}\\${x.d}`
@@ -107,4 +109,14 @@ const convertToFraction = number => {
         const x = new Fraction(number - int)
         return `${int} ${x.n}\\${x.d}`
     }
+}
+
+export const updateServingsDisplay = recipe => {
+    //Update servings
+    document.querySelector(".recipe__info-data--people").textContent = recipe.servings;
+    //Update each ingredient
+    const ingAmounts = Array.from(document.querySelectorAll(".recipe__count"));
+    ingAmounts.forEach( (el, i) => {
+        el.textContent = convertToFraction(recipe.ingredients[i].amount);
+    });
 }
