@@ -31,7 +31,6 @@ export default class Recipe {
     }
 
     parseIngredients(){
-        
         const shortFormats = ["tbsp", "tbsp", "cps", "cps", "ozs", "ozs"];
         const longFormats = ["teaspoons", "teaspoon", "cups", "cup", "ounces", "ounce", "kg", "g"];
 
@@ -46,7 +45,7 @@ export default class Recipe {
             //3) Parse into amount, unit and name
 
             //logic to find if the ingredient includes a unit and the index of the unit if it does
-            let arrIng = currentIngredient.split(' ')
+            let arrIng = currentIngredient.split(' ');
             let unitIndex = arrIng.findIndex(el2 => shortFormats.includes(el2));
 
             let parsedIng = {
@@ -64,6 +63,9 @@ export default class Recipe {
                 if(arrIng[0].includes('-')){
                     parsedIng.amount = eval(arrIng[0].replace('-','+'));
                 }
+                //Edge case ' teaspoon'
+                if(!parsedIng.amount) parsedIng.amount = 1;
+
             //No unit but includes amount
             }else if(parseInt(arrIng[0], 10)){
                 parsedIng.amount = parseInt(arrIng[0],10);

@@ -1,7 +1,7 @@
 import {elements} from './base'
 import Fraction from 'fraction.js'
 
-export const renderRecipeInfo = recipe => {
+export const renderRecipeInfo = (recipe, isLiked) => {
     const markup = `
     <figure class="recipe__fig">
         <img src="${recipe.image}" alt="${recipe.title}" class="recipe__img">
@@ -40,7 +40,7 @@ export const renderRecipeInfo = recipe => {
         </div>
         <button class="recipe__love">
             <svg class="header__likes">
-                <use href="img/icons.svg#icon-heart-outlined"></use>
+                <use href="img/icons.svg#icon-heart${isLiked === true ? '' : '-outlined'}"></use>
             </svg>
         </button>
     </div>
@@ -94,7 +94,6 @@ export const clearRecipe = () => {
 }
 
 const convertToFraction = number => {
-
     const [int,dec] = Array.from(number.toString().split('.'), el => parseInt(el,10));
     
     if(!dec)

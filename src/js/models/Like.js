@@ -1,5 +1,3 @@
-
-
 export default class Like{
     constructor(){
         this.listOfLikes = [];
@@ -17,7 +15,7 @@ export default class Like{
         return newLike;
     }
 
-    deleteItem(id){
+    deleteLike(id){
         const index =  this.listOfLikes.findIndex(el => el.id === id);
         return this.listOfLikes.splice(index, 1);
       }
@@ -26,5 +24,17 @@ export default class Like{
         return this.listOfLikes.length;
     }
 
-    isLiked()
+    isLiked(id){
+        const checkId = this.listOfLikes.findIndex(el => el.id === id);
+        return checkId === -1 ? false : true
+    }
+
+    persistData(){
+        window.localStorage.setItem('likes', JSON.stringify(this.listOfLikes));
+    }
+
+    retrieveData(){
+        const updatedList = JSON.parse(window.localStorage.getItem('likes'));
+        if(updatedList) this.listOfLikes = updatedList;
+    }
 }

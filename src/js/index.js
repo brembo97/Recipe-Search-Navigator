@@ -5,6 +5,7 @@ import Like from './models/Like'
 import * as searchView from './views/searchView' 
 import * as recipeView from './views/recipeView'
 import * as listView from './views/listView'
+import * as likeView from './views/likeView'
 import {elements, renderLoader, clearLoader} from './views/base'
 
 
@@ -75,14 +76,13 @@ elements.resultsPages.addEventListener('click', e =>{
             // Fetch the Recipe and render it
             await state.recipe.getRecipeInfo();
             state.recipe.parseIngredients();
-
             // Calculate servings and time
             state.recipe.calcPrepTime();
             state.recipe.calcServings();
-
+            
             //Render the results in UI
             clearLoader();
-            recipeView.renderRecipeInfo(state.recipe);
+            recipeView.renderRecipeInfo(state.recipe, state.likes.isLiked(id));
         }catch(err){
             alert(err);
         }
@@ -130,12 +130,44 @@ elements.shoppingList.addEventListener('click', e => {
 /**
  * CONTROL LIKE
  */
-
 const controlLike = () => {
     if(!state.likes) state.likes = new Like();
-
+    const currentId = state.recipe.id;
+    
+    // Adding a recipe to favorites
+    if(!state.likes.isLiked(currentId)){
+        //Add recipe to likes model
+        const newLike = state.likes.addLike(
+            currentId,
+            state.recipe.title,
+            state.recipe.publisher,
+            state.recipe.image
+            );
+        //Render the recipe to the UI
+        likeView.renderLikedItem(newLike);
+        //Toggle the heart symbol
+        likeView.toggleLikeIcon(false);
+    //Removing a recipe from favorites
+    }else if(state.likes.isLiked(currentId)){
+        //Delete the recipe from the model
+        state.likes.deleteLike(currentId);
+        //Remove the recipe from the UI
+        likeView.removeLikedItem(currentId);
+        //Toggle the heart symbol
+        likeView.toggleLikeIcon(true);
+    }
+    //Update local storage and check to toggle the menu
+    state.likes.persistData();
+    likeView.toggleLikeMenu(state.likes.numberOfLikes());
 }
 
+//Update the likes list on page refresh 
+window.addEventListener('load', () => {
+    state.likes = new Like();
+    state.likes.retrieveData();
+    likeView.toggleLikeMenu(state.likes.numberOfLikes());
+    state.likes.listOfLikes.forEach(like => likeView.renderLikedItem(like));
+})
 
 //Event handling for the recipe panel
 elements.recipe.addEventListener('click', e => {
