@@ -24,5 +24,8 @@
     "axios": "^0.19.2",
     "fraction.js": "^4.0.12",
     "uniqid": "^5.2.0"
+  },
+  "engines": {
+    "node": "12.x"
   }
 }
